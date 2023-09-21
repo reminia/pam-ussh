@@ -3,3 +3,4 @@
 # Ignore build artifacts
 *.so
 *.h
+.idea/

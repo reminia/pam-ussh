@@ -1,3 +1,4 @@
+//go:build darwin || linux
 // +build darwin linux
 
 /*
@@ -143,19 +144,29 @@ func authenticate(w io.Writer, uid int, username, ca string, principals map[stri
 			return false
 		},
 	}
-
+	pamLog("Found %d certificates", len(keys))
 	for idx := range keys {
 		pubKey, err := ssh.ParsePublicKey(keys[idx].Marshal())
 		if err != nil {
+			pamLog("Failed ParsePublicKey check")
 			continue
 		}
 
 		cert, ok := pubKey.(*ssh.Certificate)
 		if !ok {
+			pamLog("Failed pubKey check")
 			continue
 		}
 
+		if cert != nil {
+			pamLog("Checking certificate with serial %d", cert.Serial)
+			for _, p := range cert.ValidPrincipals {
+				pamLog("Principle %s", p)
+			}
+		}
+
 		if err := c.CheckCert(username, cert); err != nil {
+			pamLog("Failed CheckCert check")
 			continue
 		}
 
