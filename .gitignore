@@ -4,3 +4,4 @@
 *.so
 *.h
 .idea/
+pam-ussh
